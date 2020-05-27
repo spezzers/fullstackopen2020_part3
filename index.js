@@ -35,12 +35,22 @@ let persons = [
         id: 6
     },
 ]
+const port = 3001
 
 const info = `<p>Phonebook has info for ${persons.length} people</p><p>${new Date()}</p>`
 
 
 app.get('/', (req, res) => {
-    res.send('<h1>Hello world</h1>')
+    res.send(`<h1>Phonebook</h1>
+    <ul>
+        <li>
+            <a target="_blank" href="http://localhost:${port}/info">Info</a>
+        </li>
+        <li>
+            <a target="_blank" href="http://localhost:${port}/api/persons">Persons</a>
+        </li>
+    </ul>
+            `)
 })
 
 app.get('/api/persons', (req, res) => {
@@ -49,10 +59,14 @@ app.get('/api/persons', (req, res) => {
 app.get('/info', (req, res) => {
     res.send(info)
 })
+app.get('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const person = persons.find(p => p.id === id)
+    person ? res.json(person) : res.status(404).end(console.log("no person found"))
+})
 
 
 
-const port = 3001
 
 app.listen(port, () => {
     console.log(`server running at http://localhost:${port}`)
