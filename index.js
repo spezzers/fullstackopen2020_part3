@@ -66,6 +66,13 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 
+app.delete('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const deleted = persons.find(p => p.id === id)
+    persons = persons.filter(note => note.id !== id)
+    res.status(204).end(console.log(`${deleted.name} has been deleted`))
+})
+
 
 
 app.listen(port, () => {
