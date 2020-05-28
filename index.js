@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+app.use(express.json())
 
 
 
@@ -40,6 +41,7 @@ const port = 3001
 const info = `<p>Phonebook has info for ${persons.length} people</p><p>${new Date()}</p>`
 
 
+
 app.get('/', (req, res) => {
     res.send(`<h1>Phonebook</h1>
     <ul>
@@ -71,6 +73,25 @@ app.delete('/api/persons/:id', (req, res) => {
     const deleted = persons.find(p => p.id === id)
     persons = persons.filter(note => note.id !== id)
     res.status(204).end(console.log(`${deleted.name} has been deleted`))
+})
+
+
+const generateId = () => {
+    return Math.floor(Math.random()*10000000000)
+}
+
+app.post('/api/persons', (req, res) => {
+    const body = req.body
+    if (!body.name || !body.number) {
+        return res.status(400).json({error: 'missing content'})
+    }
+    const person ={
+        name: body.name,
+        number: body.number,
+        id: generateId()
+    }
+    persons.concat(person)
+    res.json(person)
 })
 
 
