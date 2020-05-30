@@ -58,10 +58,10 @@ app.get('/', (req, res) => {
 	res.send(`<h1>Phonebook</h1>
     <ul>
         <li>
-            <a href="https://persons-book.herokuapp.com/info">Info</a>
+            <a href="/info">Info</a>
         </li>
         <li>
-            <a href="https://persons-book.herokuapp.com/api/persons">Persons</a>
+            <a href="/api/persons">Persons</a>
         </li>
     </ul>
             `)
