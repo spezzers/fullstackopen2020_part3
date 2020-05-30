@@ -1,9 +1,15 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
-app.use(express.json())
-app.use(morgan('tiny'))
 
+morgan.token('reqBody', (req, res) => JSON.stringify(req.body))
+
+app.use(express.json())
+app.use(
+	morgan(
+		':method :url :status :res[content-length] - :response-time ms :reqBody'
+	)
+)
 
 let persons = [
 	{
@@ -85,9 +91,11 @@ app.post('/api/persons', (req, res) => {
 	const body = req.body
 	if (!body.name) {
 		return res.status(400).json({ error: 'missing name' })
-	} else if (!body.number) {
+	}
+	else if (!body.number) {
 		return res.status(400).json({ error: 'missing number' })
-	} else if (persons.map(p => p.name).includes(body.name)) {
+	}
+	else if (persons.map(p => p.name).includes(body.name)) {
 		return res.status(400).json({ error: 'name must be unique' })
 	}
 
@@ -96,7 +104,8 @@ app.post('/api/persons', (req, res) => {
 		number: body.number,
 		id: generateId()
 	}
-	persons.concat(person)
+	persons = persons.concat(person)
+	console.log(persons)
 	res.json(person)
 })
 
