@@ -1,1 +1,1 @@
-[Phonebook](https://persons-book.herokuapp.com)
+[Phonebook app on Heroku](https://persons-book.herokuapp.com)
