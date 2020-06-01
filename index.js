@@ -3,6 +3,9 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 
+require('dotenv').config()
+const Person = require('./models/person')
+
 app.use(express.static('build'))
 
 app.use(cors())
@@ -48,7 +51,6 @@ let persons = [
 		id: 6
 	}
 ]
-const PORT = process.env.PORT || 3001
 
 const info = `<p>Phonebook has info for ${
 	persons.length
@@ -68,10 +70,12 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-	res.json(persons)
+	Person.find({}).then(people => {
+		res.json(people)
+	})
 })
 app.get('/info', (req, res) => {
-	res.send(info)
+	return res.send(info)
 })
 app.get('/api/persons/:id', (req, res) => {
 	const id = Number(req.params.id)
@@ -82,7 +86,7 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-	const id = Number(req.params.id)
+	const id = req.params.id
 	const deleted = persons.find(p => p.id === id)
 	persons = persons.filter(note => note.id !== id)
 	res.status(204).end(console.log(`${deleted.name} has been deleted`))
@@ -96,24 +100,29 @@ app.post('/api/persons', (req, res) => {
 	const body = req.body
 	if (!body.name) {
 		return res.status(400).json({ error: 'missing name' })
-	}
+	} 
 	else if (!body.number) {
 		return res.status(400).json({ error: 'missing number' })
-	}
+	} 
 	else if (persons.map(p => p.name).includes(body.name)) {
+		
 		return res.status(400).json({ error: 'name must be unique' })
 	}
 
-	const person = {
+	const person = new Person({
 		name: body.name,
 		number: body.number,
-		id: generateId()
-	}
-	persons = persons.concat(person)
-	console.log(persons)
-	res.json(person)
+	})
+	// persons = persons.concat(person)
+	// console.log(persons)
+	// res.json(person)
+	person.save().then(savedPerson => {
+		res.json(savedPerson)
+	})
 })
 
+const PORT = process.env.PORT || 3001
+
 app.listen(PORT, () => {
-	console.log(`server running on ${PORT}`)
+	console.log(`server running on http://localhost:${PORT}`)
 })
