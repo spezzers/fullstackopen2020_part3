@@ -7,7 +7,6 @@ require('dotenv').config()
 
 const Person = require('./models/person')
 
-// Serves static files (if present)
 app.use(express.static('build'))
 
 app.use(cors())
