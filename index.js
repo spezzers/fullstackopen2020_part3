@@ -4,8 +4,10 @@ const morgan = require('morgan')
 const cors = require('cors')
 
 require('dotenv').config()
+
 const Person = require('./models/person')
 
+// Serves static files (if present)
 app.use(express.static('build'))
 
 app.use(cors())
