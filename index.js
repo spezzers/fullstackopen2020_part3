@@ -3,6 +3,7 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 require('dotenv').config()
+
 const Person = require('./models/person')
 app.use(express.static('build'))
 app.use(cors())
@@ -135,25 +136,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 	
 //// ERROR HANDLER /////////////////////////
 
-const errorHandler = (error, req, res, next) => {
-	// console.log('error:', error)
-	if (error.name === 'CastError') {
-		return res.status(400).send({ error: 'malformatted id' })
-	}
-	if (error === 'noPerson') {
-		return res.status(404).send({ error: 'No such person on record' })
-	}
-	if (error === 'noName') {
-		return res.status(400).json({ error: 'missing name' })
-	}
-	if (error === 'noNumber') {
-		return res.status(400).json({ error: 'missing number' })
-	}
-	if (error === 'notUnique') {
-		return res.status(400).json({ error: 'name must be unique' })
-	}
-	next(error)
-}
+const errorHandler = require('./modules/errorHandler')
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
