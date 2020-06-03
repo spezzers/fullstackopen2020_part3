@@ -86,6 +86,10 @@ app.get('/info', (req, res) => {
 app.get('/api/persons', (req, res) => {
 	Person.find({}).then(people => {
 		res.json(people)
+		persons = JSON.parse(JSON.stringify(people))
+		console.log(persons)
+		
+
 	})
 })
 
@@ -134,7 +138,6 @@ app.get('/api/persons/:id', (req, res, next) => {
 		.catch(error => next(error))
 	})
 	
-//// ERROR HANDLER /////////////////////////
 
 const errorHandler = require('./modules/errorHandler')
 app.use(errorHandler)
