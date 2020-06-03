@@ -17,36 +17,36 @@ app.use(
 /////// VARIABLES & FUNCTIONS //////////////
 
 let persons = [
-	{
-		name: 'Bobby Mason',
-		number: '01213555678',
-		id: 1
-	},
-	{
-		name: 'Carl Slazenger',
-		number: '0784321376',
-		id: 2
-	},
-	{
-		name: 'Tonya Garrison',
-		number: '07312957410',
-		id: 3
-	},
-	{
-		name: 'Betty Edwards',
-		number: '07533747598',
-		id: 4
-	},
-	{
-		name: 'Gordon Goodie',
-		number: '07759157826',
-		id: 5
-	},
-	{
-		name: 'Melinda Fencely',
-		number: '07435195229',
-		id: 6
-	}
+	// {
+	// 	name: 'Bobby Mason',
+	// 	number: '01213555678',
+	// 	id: 1
+	// },
+	// {
+	// 	name: 'Carl Slazenger',
+	// 	number: '0784321376',
+	// 	id: 2
+	// },
+	// {
+	// 	name: 'Tonya Garrison',
+	// 	number: '07312957410',
+	// 	id: 3
+	// },
+	// {
+	// 	name: 'Betty Edwards',
+	// 	number: '07533747598',
+	// 	id: 4
+	// },
+	// {
+	// 	name: 'Gordon Goodie',
+	// 	number: '07759157826',
+	// 	id: 5
+	// },
+	// {
+	// 	name: 'Melinda Fencely',
+	// 	number: '07435195229',
+	// 	id: 6
+	// }
 ]
 
 const info = `<p>Phonebook has info for ${
@@ -88,16 +88,16 @@ app.get('/api/persons', (req, res) => {
 	})
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
 	const body = req.body
 	if (!body.name) {
-		return res.status(400).json({ error: 'missing name' })
+		next('noName')
 	} else if (!body.number) {
-		return res.status(400).json({ error: 'missing number' })
+		next('noNumber')
 	} else if (persons.map(p => p.name).includes(body.name)) {
-		return res.status(400).json({ error: 'name must be unique' })
+		next('notUnique')
 	}
-
+	
 	const person = new Person({
 		name: body.name,
 		number: body.number
@@ -112,24 +112,49 @@ app.post('/api/persons', (req, res) => {
 
 // _______________ /api/persons/:id _______________
 
-app.get('/api/persons/:id', (req, res) => {
-	const id = Number(req.params.id)
-	const person = persons.find(p => p.id === id)
-	person
-		? res.json(person)
-		: res.status(404).end(console.log('no person found'))
-})
-
-app.delete('/api/persons/:id', (req, res, next) => {
-	console.log(req.params.id)
-	Person.findByIdAndRemove(req.params.id)
-	.then(result => {
-		res.status(204).end()
+app.get('/api/persons/:id', (req, res, next) => {
+	Person.findById(req.params.id)
+	.then(person => {
+		if (person) {
+			return res.json(person)
+		} else {
+			next('noPerson')
+			}
+		})
+		.catch(error => next(error))
 	})
-	.catch(error => next(error))
-})
+	
+	app.delete('/api/persons/:id', (req, res, next) => {
+		console.log(req.params.id)
+		Person.findByIdAndRemove(req.params.id)
+		.then(result => {
+			res.status(204).end()
+		})
+		.catch(error => next(error))
+	})
+	
+//// ERROR HANDLER /////////////////////////
 
-// ========================================
+const errorHandler = (error, req, res, next) => {
+	// console.log('error:', error)
+	if (error.name === 'CastError') {
+		return res.status(400).send({ error: 'malformatted id' })
+	}
+	if (error === 'noPerson') {
+		return res.status(404).send({ error: 'No such person on record' })
+	}
+	if (error === 'noName') {
+		return res.status(400).json({ error: 'missing name' })
+	}
+	if (error === 'noNumber') {
+		return res.status(400).json({ error: 'missing number' })
+	}
+	if (error === 'notUnique') {
+		return res.status(400).json({ error: 'name must be unique' })
+	}
+	next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 
