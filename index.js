@@ -17,42 +17,7 @@ app.use(
 
 /////// VARIABLES & FUNCTIONS //////////////
 
-let persons = [
-	// {
-	// 	name: 'Bobby Mason',
-	// 	number: '01213555678',
-	// 	id: 1
-	// },
-	// {
-	// 	name: 'Carl Slazenger',
-	// 	number: '0784321376',
-	// 	id: 2
-	// },
-	// {
-	// 	name: 'Tonya Garrison',
-	// 	number: '07312957410',
-	// 	id: 3
-	// },
-	// {
-	// 	name: 'Betty Edwards',
-	// 	number: '07533747598',
-	// 	id: 4
-	// },
-	// {
-	// 	name: 'Gordon Goodie',
-	// 	number: '07759157826',
-	// 	id: 5
-	// },
-	// {
-	// 	name: 'Melinda Fencely',
-	// 	number: '07435195229',
-	// 	id: 6
-	// }
-]
-
-const info = `<p>Phonebook has info for ${
-	persons.length
-} people</p><p>${new Date()}</p>`
+// let persons = []
 
 // const generateId = () => {
 // 	return Math.floor(Math.random() * 10000000000)
@@ -78,7 +43,9 @@ app.get('/', (req, res) => {
 // _______________ /info _______________
 
 app.get('/info', (req, res) => {
-	return res.send(info)
+	Person.find({}).then(people => {
+		res.send(`<p>Phonebook has info for ${people.length} people</p><p>${new Date()}</p>`)
+	})
 })
 
 // _______________ /api/persons _______________
