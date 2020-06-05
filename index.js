@@ -87,9 +87,6 @@ app.get('/api/persons', (req, res) => {
 	Person.find({}).then(people => {
 		res.json(people)
 		persons = JSON.parse(JSON.stringify(people))
-		console.log(persons)
-		
-
 	})
 })
 
@@ -102,14 +99,11 @@ app.post('/api/persons', (req, res, next) => {
 	} else if (persons.map(p => p.name).includes(body.name)) {
 		next('notUnique')
 	}
-	
+
 	const person = new Person({
 		name: body.name,
 		number: body.number
 	})
-	// persons = persons.concat(person)
-	// console.log(persons)
-	// res.json(person)
 	person.save().then(savedPerson => {
 		res.json(savedPerson)
 	})
@@ -119,25 +113,33 @@ app.post('/api/persons', (req, res, next) => {
 
 app.get('/api/persons/:id', (req, res, next) => {
 	Person.findById(req.params.id)
-	.then(person => {
-		if (person) {
-			return res.json(person)
-		} else {
-			next('noPerson')
+		.then(person => {
+			if (person) {
+				return res.json(person)
+			} else {
+				next('noPerson')
 			}
 		})
 		.catch(error => next(error))
-	})
-	
-	app.delete('/api/persons/:id', (req, res, next) => {
-		console.log(req.params.id)
-		Person.findByIdAndRemove(req.params.id)
+})
+
+app.delete('/api/persons/:id', (req, res, next) => {
+	Person.findByIdAndRemove(req.params.id)
 		.then(result => {
 			res.status(204).end()
 		})
 		.catch(error => next(error))
-	})
-	
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+	Person.findByIdAndUpdate(req.body.id, req.body, { new: true })
+		.then(result => {
+			res.json(result)
+		})
+		.catch(error => next(error))
+})
+
+//===========================================
 
 const errorHandler = require('./modules/errorHandler')
 app.use(errorHandler)
