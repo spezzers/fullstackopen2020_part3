@@ -53,27 +53,28 @@ app.get('/info', (req, res) => {
 app.get('/api/persons', (req, res) => {
 	Person.find({}).then(people => {
 		res.json(people)
-		persons = JSON.parse(JSON.stringify(people))
+		persons = people
 	})
 })
 
 app.post('/api/persons', (req, res, next) => {
 	const body = req.body
-	if (!body.name) {
-		next('noName')
-	} else if (!body.number) {
-		next('noNumber')
-	} else if (persons.map(p => p.name).includes(body.name)) {
-		next('notUnique')
-	}
+	// if (!body.name) {
+	// 	next('noName')
+	// } else if (!body.number) {
+	// 	next('noNumber')
+	// } else if (persons.map(p => p.name).includes(body.name)) {
+	// 	next('notUnique')
+	// }
 
 	const person = new Person({
 		name: body.name,
 		number: body.number
 	})
-	person.save().then(savedPerson => {
-		res.json(savedPerson)
-	})
+	person.save()
+		.then(savedPerson => res.json(savedPerson))
+		.catch(error => next(error))
+
 })
 
 // _______________ /api/persons/:id _______________
