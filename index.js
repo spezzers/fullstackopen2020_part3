@@ -7,7 +7,7 @@ require('dotenv').config()
 const Person = require('./models/person')
 app.use(express.static('build'))
 app.use(cors())
-morgan.token('reqBody', (req, res) => JSON.stringify(req.body))
+morgan.token('reqBody', (req) => JSON.stringify(req.body))
 app.use(express.json())
 app.use(
 	morgan(
@@ -53,7 +53,6 @@ app.get('/info', (req, res) => {
 app.get('/api/persons', (req, res) => {
 	Person.find({}).then(people => {
 		res.json(people)
-		persons = people
 	})
 })
 
@@ -85,7 +84,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 
 app.delete('/api/persons/:id', (req, res, next) => {
 	Person.findByIdAndRemove(req.params.id)
-		.then(result => {
+		.then(() => {
 			res.status(204).end()
 		})
 		.catch(error => next(error))
@@ -103,7 +102,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 
 const errorHandler = require('./modules/errorHandler')
 app.use(errorHandler)
-
+/*global process*/
 const PORT = process.env.PORT || 3001
 
 app.listen(PORT, () => {
