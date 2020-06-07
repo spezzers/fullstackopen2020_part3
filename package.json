@@ -7,6 +7,7 @@
 		"start": "node index.js",
 		"dev": "nodemon index.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
+		"build:ui": "rm -r build && cd ../fullstackopen2020/part3/phonebook_frontend && npm run build --prod && cp -r build ../../../fullstackopen2020_part3/",
 		"logs": "heroku logs --tail"
 	},
 	"author": "Benjamin Morton-Sperry",
