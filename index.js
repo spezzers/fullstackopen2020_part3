@@ -59,14 +59,6 @@ app.get('/api/persons', (req, res) => {
 
 app.post('/api/persons', (req, res, next) => {
 	const body = req.body
-	// if (!body.name) {
-	// 	next('noName')
-	// } else if (!body.number) {
-	// 	next('noNumber')
-	// } else if (persons.map(p => p.name).includes(body.name)) {
-	// 	next('notUnique')
-	// }
-
 	const person = new Person({
 		name: body.name,
 		number: body.number
@@ -100,7 +92,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-	Person.findByIdAndUpdate(req.body.id, req.body, { new: true })
+	Person.findByIdAndUpdate(req.body.id, req.body, { new: true, runValidators: true })
 		.then(result => {
 			res.json(result)
 		})
